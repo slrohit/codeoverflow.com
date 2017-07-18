@@ -34,7 +34,8 @@
         <div v-if="codeOutput">
           <div v-if=" codeOutput['compile_status'] === 'OK' ">
             <div class="alert alert-success">
-              <strong>Output: </strong> {{codeOutput['run_status']['output']}}
+              <strong>Output: </strong> 
+              <p v-html="codeOutput['run_status']['output_html']"></p>
             </div>
           </div>
           <div v-else>
@@ -158,22 +159,36 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'codeOutput',
+      'codeOutput','getSolution'
     ])
   },
   mounted (){
-    var mode = this.$cookie.get('e_mode') ? this.$cookie.get('e_mode') : 'c_cpp'
-    var font = this.$cookie.get('e_font') ? this.$cookie.get('e_font') : '12pt'
-    var template = this.$cookie.get('e_mode') ? this.templates[this.$cookie.get('e_mode')] : this.templates['c_cpp']
-    this.fontSize = parseInt(font);
-    if(mode == 'c_cpp'){
-      this.lang='C++';
-    }else if(mode == 'java' ){
-      this.lang='JAVA';
-    }else{
-      this.lang = 'PY';
+    var flag = true
+    if(this.$route.query.q){
+      const path = '/'+atob(this.$route.query.q)+'.cpp';
+      debugger;
+      this.getSolution(path).then( (data) => {
+            this.initEditor('c_cpp','12pt',data);
+            flag = false
+          })
+          .catch(() => {
+            
+          })
     }
-    this.initEditor(mode,font,template);
+    if(flag){
+      var mode = this.$cookie.get('e_mode') ? this.$cookie.get('e_mode') : 'c_cpp'
+      var font = this.$cookie.get('e_font') ? this.$cookie.get('e_font') : '12pt'
+      var template = this.$cookie.get('e_mode') ? this.templates[this.$cookie.get('e_mode')] : this.templates['c_cpp']
+      this.fontSize = parseInt(font);
+      if(mode == 'c_cpp'){
+        this.lang='C++';
+      }else if(mode == 'java' ){
+        this.lang='JAVA';
+      }else{
+        this.lang = 'PY';
+      }
+      this.initEditor(mode,font,template);
+    }
     document.getElementById('editorCont').scrollIntoView();
   }
 }

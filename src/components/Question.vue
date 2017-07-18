@@ -2,20 +2,12 @@
   <div class="question container-fluid">
     <div class="row">
       <div class="col-md-12">
-        <div class="ques-desc card">
+        <div class="ques-desc card" v-if="question">
           <div class="card-header">
-            <h1 class="card-title">{{title}}</h1>
+            <h1 class="card-title">{{question.title}}</h1>
           </div>
           <div class="card-block">
-            <h2>Given an array of integers, find a subarray whose sum is maximum</h2>
-            <h3>
-              Ex: given an array arr=[-3,1,3,-2,4,-6,1,2]
-              <br>
-              Maximum sum subarray is arr[1:4] (0 based index) whose sum is 5 which is maximum amoung all the subarray sums
-            </h3>
-            <blockquote class="blockquote">
-              <p class="mb-0">Subarray mean continous sequence</p>
-            </blockquote>
+            <div v-html="question.html"></div>
             <div class="solve" v-if="!enableEditor" ><button class="btn btn-primary" @click="enableEditor = !enableEditor" >Solve</button></div>
           </div>
         </div>
@@ -26,7 +18,8 @@
 </template>
 
 <script>
-import Editor from './Editor'
+import { mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 export default {
   name: 'question',
   data () {
@@ -35,7 +28,15 @@ export default {
       enableEditor: false
     }
   },
+  methods: {
+    ...mapActions({
+        loadQuestion: 'LOAD_QUESTION'
+      })
+  },
   computed: {
+    ...mapGetters([
+        'question'
+      ]),
     title: function () {
       return this.$route.params.title && this.$route.params.title.indexOf('-') !== -1 ? this.$route.params.title.split('-').join(' ') : this.$route.params.title
     },
@@ -45,9 +46,10 @@ export default {
   },
   created (){
     document.title = this.title
+    this.loadQuestion(this.$route.params.id)
   },
   components:{
-    'my-editor':Editor
+    'my-editor':() => import('./Editor')
   }
 }
 </script>

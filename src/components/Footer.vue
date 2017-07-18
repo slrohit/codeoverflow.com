@@ -4,41 +4,37 @@
       <div class="row">
         <div class="col-sm-3">
             <h2 class="logo">
-            	<router-link class="navbar-brand bg-logo" to='/foo'>Nav bar</router-link>
+            	<router-link class="navbar-brand bg-logo" to='/'>Nav bar</router-link>
             	Codeoverflow
             </h2>
         </div>
         <div class="col-sm-2">
             <h5>Get started</h5>
             <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Sign up</a></li>
-                <li><a href="#">Downloads</a></li>
+                <li><router-link  to="/">Home</router-link ></li>
+                <li><router-link  to="/signup">Sign up</router-link ></li>
             </ul>
         </div>
         <div class="col-sm-2">
             <h5>About us</h5>
             <ul>
-                <li><a href="#">Company Information</a></li>
-                <li><a href="#">Contact us</a></li>
-                <li><a href="#">Reviews</a></li>
+                <li><router-link to="/about-us">About us</router-link></li>
+                <li><router-link to="/contact-us">Contact us</router-link></li>
             </ul>
         </div>
         <div class="col-sm-2">
             <h5>Support</h5>
             <ul>
                 <li><a href="#">FAQ</a></li>
-                <li><a href="#">Help desk</a></li>
                 <li><a href="#">Forums</a></li>
             </ul>
         </div>
         <div class="col-sm-3">
             <div class="social-networks">
-                <a href="#" class="twitter"><i class="fa fa-twitter"></i></a>
-                <a href="#" class="facebook"><i class="fa fa-facebook"></i></a>
-                <a href="#" class="google"><i class="fa fa-google-plus"></i></a>
+                <a href="https://twitter.com/rohit_slrohit" target="_blank"  rel="noopener" class="twitter"><i title="twitter" class="fa fa-twitter"></i></a>
+                <a href="https://www.facebook.com/codeover" target="_blank"  rel="noopener" class="facebook"><i title="facebook" class="fa fa-facebook"></i></a>
+                <a href="https://plus.google.com/collection/YEJWHE" target="_blank"  rel="noopener" class="google"><i title="google" class="fa fa-google-plus"></i></a>
             </div>
-            <button type="button" class="btn btn-default">Contact us</button>
         </div>
       </div>
     </div>

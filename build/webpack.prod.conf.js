@@ -1,3 +1,4 @@
+var fs = require('fs')
 var path = require('path')
 var utils = require('./utils')
 var webpack = require('webpack')
@@ -8,10 +9,9 @@ var CopyWebpackPlugin = require('copy-webpack-plugin')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+var SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
 
-var env = process.env.NODE_ENV === 'testing'
-  ? require('../config/test.env')
-  : config.build.env
+var env = config.build.env
 
 var webpackConfig = merge(baseWebpackConfig, {
   module: {
@@ -52,20 +52,22 @@ var webpackConfig = merge(baseWebpackConfig, {
     // you can customize output by editing /index.html
     // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
-      filename: process.env.NODE_ENV === 'testing'
-        ? 'index.html'
-        : config.build.index,
+      filename: config.build.index,
       template: 'index.html',
       inject: true,
       minify: {
         removeComments: true,
         collapseWhitespace: true,
-        removeAttributeQuotes: true
+        removeAttributeQuotes: true,
+        minifyJS: true,
+        minifyCSS: true 
         // more options:
         // https://github.com/kangax/html-minifier#options-quick-reference
       },
       // necessary to consistently work with multiple chunks via CommonsChunkPlugin
-      chunksSortMode: 'dependency'
+      chunksSortMode: 'dependency',
+      serviceWorkerLoader: `<script>${fs.readFileSync(path.join(__dirname,
+        './service-worker-prod.js'), 'utf-8')}</script>`
     }),
     // split vendor js into its own file
     new webpack.optimize.CommonsChunkPlugin({
@@ -94,7 +96,29 @@ var webpackConfig = merge(baseWebpackConfig, {
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
       }
-    ])
+    ]),
+    // service worker caching
+    new SWPrecacheWebpackPlugin({
+      cacheId: 'my-vue-app',
+      filename: 'service-worker.js',
+      staticFileGlobs: ['dist/**/*.{js,html,css,png,ico,svg,otf,eot,ttf,woff,woff2,json}'],
+      minify: true,
+      stripPrefix: 'dist/',
+      runtimeCaching: [
+        {
+          handler: 'networkFirst',
+          urlPattern: /ctyy.herokuapp.com\/questions/
+        },
+        {
+          handler: 'cacheFirst',
+          urlPattern: /unpkg.com/
+        },
+        {
+          handler: 'cacheFirst',
+          urlPattern: /\/$/
+        }
+      ]
+    })
   ]
 })
 
